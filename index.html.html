@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>みそ汁の実を考えよう！〜味も栄養もバランスのいいみそ汁づくりへのロード〜</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background-color: #FDFBF7;
+        }
+        .bg-wood {
+            background-color: #EEDCC4;
+            background-image: radial-gradient(#DEBA8C 1px, transparent 0);
+            background-size: 16px 16px;
+        }
+        .bowl-gradient {
+            background: radial-gradient(circle, #D88235 0%, #A65715 70%, #733907 100%);
+        }
+        .soup-surface {
+            background: radial-gradient(circle, #EBB471 0%, #C8883F 75%, #A86B27 100%);
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.3);
+        }
+        /* もくもく湯気のアニメーション */
+        @keyframes steamMokumoku {
+            0% { transform: translateY(0) scale(0.6); opacity: 0; }
+            40% { opacity: 0.5; }
+            80% { transform: translateY(-35px) scale(1.2); opacity: 0.3; }
+            100% { transform: translateY(-50px) scale(1.4); opacity: 0; }
+        }
+        .steam-cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.55);
+            border-radius: 50%;
+            filter: blur(4px);
+            pointer-events: none;
+        }
+        .steam-1 {
+            width: 32px; height: 32px; left: 35%; top: 20px;
+            animation: steamMokumoku 3.5s infinite ease-out;
+        }
+        .steam-2 {
+            width: 44px; height: 44px; left: 48%; top: 10px;
+            animation: steamMokumoku 4s infinite ease-out 1.2s;
+        }
+        .steam-3 {
+            width: 28px; height: 28px; left: 60%; top: 25px;
+            animation: steamMokumoku 3.2s infinite ease-out 2.2s;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1ECE1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4BBA5;
+            border-radius: 4px;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+    <!-- ヘッダー -->
+    <header class="bg-amber-600 text-white shadow-md no-print sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-amber-100 text-amber-800 p-2 rounded-full font-bold text-xl">
+                    🍲
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-extrabold tracking-wide">みそ汁の実を考えよう！</h1>
+                    <p class="text-xs text-amber-100 hidden sm:block">〜味も栄養もバランスのいいみそ汁づくりへのロード〜 (小学5年 家庭科)</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="reset-btn" class="bg-amber-700 hover:bg-amber-800 text-amber-100 text-xs sm:text-sm px-3 py-1.5 rounded-lg transition flex items-center gap-1 font-bold">
+                    <i class="fa-solid fa-rotate-left"></i> やりなおす
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="flex-grow max-w-6xl w-full mx-auto p-3 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 no-print">
+
+        <!-- 左カラム：選択パネル (7/12) -->
+        <section class="lg:col-span-7 space-y-6">
+            
+            <!-- STEP 1: 出汁（だし）選択 -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border-2 border-amber-200">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-base sm:text-lg font-extrabold text-amber-900 flex items-center gap-2">
+                        <span class="bg-amber-500 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm">1</span>
+                        出汁（だし）を1つえらぼう！
+                    </h2>
+                    <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">1つだけ選択</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 sm:gap-3" id="dashi-options">
+                    <!-- Dashi cards injected by JS -->
+                </div>
+            </div>
+
+            <!-- STEP 2: 具材選択 -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border-2 border-emerald-200">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-base sm:text-lg font-extrabold text-emerald-900 flex items-center gap-2">
+                        <span class="bg-emerald-500 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm">2</span>
+                        具材（ぐざい）を2〜3つえらぼう！
+                    </h2>
+                    <span id="ingredient-count" class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-200">
+                        選択中: 0 / 3
+                    </span>
+                </div>
+                
+                <!-- カテゴリタブまたはフィルター -->
+                <div class="flex gap-2 mb-3 text-xs overflow-x-auto pb-1">
+                    <button class="filter-btn bg-slate-800 text-white px-3 py-1 rounded-full font-bold whitespace-nowrap active" data-filter="all">すべて</button>
+                    <button class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full font-bold whitespace-nowrap" data-filter="根菜">根菜 (根や茎)</button>
+                    <button class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full font-bold whitespace-nowrap" data-filter="葉物">葉物 (葉や茎)</button>
+                    <button class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full font-bold whitespace-nowrap" data-filter="きのこ">きのこ</button>
+                    <button class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full font-bold whitespace-nowrap" data-filter="その他">その他</button>
+                </div>
+
+                <!-- 具材グリッド -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 max-h-[380px] overflow-y-auto pr-1" id="ingredient-options">
+                    <!-- Ingredients cards injected by JS -->
+                </div>
+            </div>
+
+            <!-- STEP 3: 名前・ネーミング入力 -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border-2 border-indigo-200">
+                <h2 class="text-base sm:text-lg font-extrabold text-indigo-900 mb-3 flex items-center gap-2">
+                    <span class="bg-indigo-500 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm">3</span>
+                    なまえ と みそ汁のネーミングを入力しよう！
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">なまえ（または出席番号）</label>
+                        <input type="text" id="group-name" placeholder="例: やまだ たろう" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">みそ汁のネーミング</label>
+                        <input type="text" id="soup-name" placeholder="例: 彩り満点！ホクホクみそ汁" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 右カラム：プレビュー＆メーター (5/12) -->
+        <section class="lg:col-span-5 space-y-6">
+
+            <!-- 味噌汁のお椀ビジュアル -->
+            <div class="bg-wood rounded-2xl p-6 shadow-md border-2 border-amber-300 text-center flex flex-col items-center justify-center relative overflow-hidden min-h-[300px]">
+                <div class="absolute top-2 left-3 bg-white/80 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-amber-900 border border-amber-200 z-10 flex items-center gap-1">
+                    🥣 完成イメージ
+                </div>
+
+                <!-- 表示モード切替（自動イラスト / お絵かき） -->
+                <div class="absolute top-2 right-3 z-20 flex gap-1 bg-white/90 p-1 rounded-lg border border-amber-200 text-xs font-bold">
+                    <button id="mode-auto-btn" class="px-2 py-1 rounded bg-amber-500 text-white transition">自動イラスト</button>
+                    <button id="mode-draw-btn" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition">✏️ お絵かき</button>
+                </div>
+
+                <!-- もくもく湯気エフェクト -->
+                <div class="absolute top-4 w-full h-24 z-20 pointer-events-none">
+                    <div class="steam-cloud steam-1"></div>
+                    <div class="steam-cloud steam-2"></div>
+                    <div class="steam-cloud steam-3"></div>
+                </div>
+
+                <!-- お椀本体 -->
+                <div class="relative w-52 h-52 sm:w-60 sm:h-60 mt-6">
+                    <!-- 外枠・影 -->
+                    <div class="w-full h-full rounded-full bowl-gradient p-3 shadow-2xl flex items-center justify-center relative">
+                        <!-- 汁の表面 -->
+                        <div id="bowl-surface" class="w-full h-full rounded-full soup-surface relative overflow-hidden flex items-center justify-center transition-all duration-300">
+                            <!-- ① 自動イラスト表示エリア -->
+                            <div id="bowl-ingredients" class="absolute inset-0 p-4 flex flex-wrap items-center justify-center gap-1.5 overflow-hidden">
+                                <span class="text-xs text-amber-950 font-bold bg-amber-100/80 px-3 py-1 rounded-full shadow border border-amber-300">具材を選んでね</span>
+                            </div>
+
+                            <!-- ② 自由お絵かき用 Canvas エリア -->
+                            <canvas id="paint-canvas" class="absolute inset-0 w-full h-full rounded-full hidden cursor-crosshair z-10"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- お絵かきツールバー（お絵かきモード時のみ表示） -->
+                <div id="draw-tools" class="mt-3 bg-white/95 backdrop-blur rounded-xl p-2.5 w-full border border-amber-200 hidden flex-wrap items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-bold text-slate-600">色:</span>
+                        <button onclick="setDrawColor('#D97706', this)" class="color-btn w-6 h-6 rounded-full bg-amber-600 border-2 border-white ring-2 ring-amber-500 shadow-sm transition-transform transform scale-110"></button>
+                        <button onclick="setDrawColor('#EA580C', this)" class="color-btn w-6 h-6 rounded-full bg-orange-600 border border-slate-300 transition-transform"></button>
+                        <button onclick="setDrawColor('#16A34A', this)" class="color-btn w-6 h-6 rounded-full bg-green-600 border border-slate-300 transition-transform"></button>
+                        <button onclick="setDrawColor('#FFFFFF', this)" class="color-btn w-6 h-6 rounded-full bg-white border border-slate-300 transition-transform"></button>
+                        <button onclick="setDrawColor('#78350F', this)" class="color-btn w-6 h-6 rounded-full bg-amber-900 border border-slate-300 transition-transform"></button>
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-bold text-slate-600">太さ:</span>
+                        <button onclick="setBrushSize(3, this)" class="brush-btn px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 font-bold">細</button>
+                        <button onclick="setBrushSize(7, this)" class="brush-btn px-2 py-0.5 rounded bg-amber-500 text-white font-bold shadow-sm">中</button>
+                        <button onclick="setBrushSize(14, this)" class="brush-btn px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 font-bold">太</button>
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="clearCanvas()" class="bg-rose-100 hover:bg-rose-200 text-rose-800 font-bold px-2 py-1 rounded flex items-center gap-1">
+                            <i class="fa-solid fa-trash-can"></i> 消す
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 選択サマリー -->
+                <div class="mt-3 bg-white/90 backdrop-blur rounded-xl p-3 w-full border border-amber-200 text-left text-xs space-y-1">
+                    <div class="font-bold text-amber-900 flex justify-between">
+                        <span>出汁: <span id="summary-dashi" class="text-slate-700">未選択</span></span>
+                    </div>
+                    <div class="font-bold text-amber-900">
+                        具材: <span id="summary-ingredients" class="text-slate-700">未選択</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- パラメーター4つ -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border-2 border-slate-200 space-y-3.5">
+                <h3 class="font-extrabold text-slate-800 text-sm sm:text-base border-b pb-2 flex items-center justify-between">
+                    <span>📊 バランスメーター</span>
+                    <span id="total-score" class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">合計: 0 pt</span>
+                </h3>
+
+                <!-- 1. 彩り（見た目） -->
+                <div>
+                    <div class="flex justify-between text-xs font-bold mb-1">
+                        <span class="text-rose-600 flex items-center gap-1"><i class="fa-solid fa-palette"></i> ① 彩り（見た目）</span>
+                        <span id="score-color-val" class="text-slate-600">0 / 100</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden border border-slate-200">
+                        <div id="score-color-bar" class="bg-rose-500 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                    <p id="score-color-desc" class="text-[11px] text-slate-500 mt-0.5">色の組み合わせを工夫しよう</p>
+                </div>
+
+                <!-- 2. うまみ・食感（味） -->
+                <div>
+                    <div class="flex justify-between text-xs font-bold mb-1">
+                        <span class="text-amber-600 flex items-center gap-1"><i class="fa-solid fa-utensils"></i> ② うまみ・食感（味）</span>
+                        <span id="score-taste-val" class="text-slate-600">0 / 100</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden border border-slate-200">
+                        <div id="score-taste-bar" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                    <p id="score-taste-desc" class="text-[11px] text-slate-500 mt-0.5">硬さや出汁との相性をチェック</p>
+                </div>
+
+                <!-- 3. 手際の良さ（調理難易度） -->
+                <div>
+                    <div class="flex justify-between text-xs font-bold mb-1">
+                        <span class="text-emerald-600 flex items-center gap-1"><i class="fa-solid fa-clock"></i> ③ 手際の良さ（安全・時間）</span>
+                        <span id="score-easy-val" class="text-slate-600">0 / 100</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden border border-slate-200">
+                        <div id="score-easy-bar" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                    <p id="score-easy-desc" class="text-[11px] text-slate-500 mt-0.5">切る量や加熱時間のバランス</p>
+                </div>
+
+                <!-- 4. コスパ・安心（予算・安全） -->
+                <div>
+                    <div class="flex justify-between text-xs font-bold mb-1">
+                        <span class="text-indigo-600 flex items-center gap-1"><i class="fa-solid fa-piggy-bank"></i> ④ コスパ・安心（予算・アレルギー）</span>
+                        <span id="score-cost-val" class="text-slate-600">0 / 100</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden border border-slate-200">
+                        <div id="score-cost-bar" class="bg-indigo-500 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                    <p id="score-cost-desc" class="text-[11px] text-slate-500 mt-0.5">手軽に買えてみんなが安心して食べられるか</p>
+                </div>
+
+            </div>
+
+            <!-- プレゼンカード生成ボタン -->
+            <button id="open-presentation-btn" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-base py-3.5 px-4 rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-powerpoint text-xl"></i>
+                プレゼンシートを作成する！
+            </button>
+
+        </section>
+
+    </main>
+
+    <!-- モーダル：プレゼンシート＆原稿出力 (印刷可能) -->
+    <div id="presentation-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border-4 border-amber-400 p-6 relative">
+            
+            <button id="close-modal-btn" class="no-print absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 text-slate-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">
+                ✕
+            </button>
+
+            <!-- プレゼンカード本文 (印刷範囲) -->
+            <div id="print-area" class="space-y-6">
+
+                <!-- プレゼンヘッダー -->
+                <div class="border-b-4 border-amber-500 pb-3 flex justify-between items-end">
+                    <div>
+                        <p class="text-xs font-bold text-amber-700">【5年 家庭科 調理実習プレゼン】</p>
+                        <h2 id="pres-soup-name" class="text-2xl font-black text-slate-800">最高のおみそしる</h2>
+                    </div>
+                    <div class="text-right">
+                        <p id="pres-group-name" class="text-sm font-bold text-slate-700">なまえ：未入力</p>
+                    </div>
+                </div>
+
+                <!-- 選んだ組み合わせ -->
+                <div class="grid grid-cols-3 gap-3 bg-amber-50 p-4 rounded-xl border border-amber-200 text-center">
+                    <div>
+                        <span class="text-xs font-bold text-amber-800 block">選んだ出汁</span>
+                        <span id="pres-dashi" class="text-base font-extrabold text-slate-800">未選択</span>
+                    </div>
+                    <div class="col-span-2">
+                        <span class="text-xs font-bold text-amber-800 block">選んだ具材</span>
+                        <span id="pres-ingredients" class="text-base font-extrabold text-slate-800">未選択</span>
+                    </div>
+                </div>
+
+                <!-- アピールポイント（自動生成＆編集可能） -->
+                <div class="space-y-4 text-sm">
+                    <h3 class="font-extrabold text-slate-800 text-base border-l-4 border-amber-500 pl-2">💡 ぼくたち・わたしたちのアピールポイント！</h3>
+                    
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <h4 class="font-bold text-amber-900 text-xs mb-1">①【味と食感のくふう】</h4>
+                        <p id="pres-reason-taste" class="text-xs text-slate-700">具材と出汁の相性を考えて選びました。</p>
+                    </div>
+
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <h4 class="font-bold text-amber-900 text-xs mb-1">②【見た目と彩り】</h4>
+                        <p id="pres-reason-color" class="text-xs text-slate-700">お椀に盛り付けたときの色のバランスを意識しました。</p>
+                    </div>
+
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <h4 class="font-bold text-amber-900 text-xs mb-1">③【安全と調理の手際】</h4>
+                        <p id="pres-reason-easy" class="text-xs text-slate-700">包丁の切り方や火の通し方に気をつけます。</p>
+                    </div>
+                </div>
+
+                <!-- 発表用原稿メモ -->
+                <div class="bg-orange-50 p-4 rounded-xl border border-orange-200 space-y-2">
+                    <h3 class="font-extrabold text-orange-900 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-microphone"></i> 発表ハキハキメモ（プレゼン原稿）
+                    </h3>
+                    <div id="pres-script" class="text-xs text-slate-800 leading-relaxed font-mono bg-white p-3 rounded border border-orange-100 whitespace-pre-line">
+                        プレゼン原稿がここに自動作成されます。
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- アクションボタン -->
+            <div class="mt-6 flex justify-end gap-3 no-print border-t pt-4">
+                <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> 印刷する / PDF保存
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- データ定義 ---
+        const DASHI_DATA = [
+            {
+                id: 'niboshi',
+                name: '煮干し',
+                icon: '🐟',
+                desc: '頭とワタを取る体験ができる！旨味が強くてご飯に合う。',
+                score: { taste: 35, easy: 20, cost: 30 }
+            },
+            {
+                id: 'katsuo',
+                name: 'かつお節',
+                icon: '🍂',
+                desc: 'ザルでこす基本を学べる！香りがとても良い定番の出汁。',
+                score: { taste: 30, easy: 30, cost: 25 }
+            },
+            {
+                id: 'konbu',
+                name: '昆布',
+                icon: '🌿',
+                desc: '入れるだけ簡単！沸騰直前に取り出すコツを学べる上品な味。',
+                score: { taste: 25, easy: 35, cost: 25 }
+            }
+        ];
+
+        // 調理後のリアルな見ため（アップロードされた画像を使用した具材データ）
+        // JPEGやPNGなどの画像ファイル、またはData URLを指定可能です
+        const INGREDIENT_DATA = [
+            { 
+                id: 'daikon', name: '大根', cat: '根菜', colorGroup: '白', icon: '🎋', bg: 'bg-slate-100', text: 'text-slate-800', 
+                desc: 'ピーラー・いちょう切り。味がしっかり染み込む！', 
+                cutName: 'いちょう切り大根',
+                imgSrc: '【みそ汁】大根.jpg', 
+                score: { color: 15, taste: 25, easy: 20, cost: 25 } 
+            },
+            { 
+                id: 'ninjin', name: '人参', cat: '根菜', colorGroup: '赤', icon: '🥕', bg: 'bg-orange-100', text: 'text-orange-900', 
+                desc: '薄いいちょう切り。鮮やかなオレンジで彩りUP！', 
+                cutName: '薄切り人参',
+                imgSrc: '【みそ汁】にんじん.jpg',
+                score: { color: 30, taste: 20, easy: 20, cost: 25 } 
+            },
+            { 
+                id: 'jagaimo', name: 'じゃがいも', cat: '根菜', colorGroup: '白', icon: '🥔', bg: 'bg-amber-100', text: 'text-amber-900', 
+                desc: '皮むき練習に最適。ホクホクして食べごたえ抜群！', 
+                cutName: '角切りじゃがいも',
+                imgSrc: '【みそ汁】じゃがいも.jpg',
+                score: { color: 10, taste: 25, easy: 15, cost: 25 } 
+            },
+            { 
+                id: 'negi', name: '長ネギ', cat: '葉物', colorGroup: '緑', icon: '🌱', bg: 'bg-emerald-100', text: 'text-emerald-900', 
+                desc: '小口切り。薬味の香りと加熱による甘み。', 
+                cutName: '刻みネギ',
+                imgSrc: '【みそ汁】ながねぎ.jpg',
+                score: { color: 25, taste: 20, easy: 25, cost: 25 } 
+            },
+            { 
+                id: 'tamanegi', name: '玉ねぎ', cat: '葉物', colorGroup: '白', icon: '🧅', bg: 'bg-amber-50', text: 'text-amber-900', 
+                desc: 'スライス。煮込むことでやさしい甘みが出る。', 
+                cutName: 'スライス玉ねぎ',
+                imgSrc: '【みそ汁】玉ねぎ.jpg',
+                score: { color: 10, taste: 25, easy: 25, cost: 25 } 
+            },
+            { 
+                id: 'hakusai', name: '白菜', cat: '葉物', colorGroup: '緑', icon: '🥬', bg: 'bg-emerald-50', text: 'text-emerald-900', 
+                desc: '短冊切り。柔らかくて汁の味がよく染みる。', 
+                cutName: 'カット白菜',
+                imgSrc: '【みそ汁】はくさい.jpg',
+                score: { color: 20, taste: 20, easy: 25, cost: 25 } 
+            },
+            { 
+                id: 'kyabetsu', name: 'キャベツ', cat: '葉物', colorGroup: '緑', icon: '🥗', bg: 'bg-green-100', text: 'text-green-900', 
+                desc: '手でちぎることも可能！味噌の塩気と相性抜群。', 
+                cutName: 'ざく切りキャベツ',
+                imgSrc: '【みそ汁】キャベツ.jpg',
+                score: { color: 20, taste: 20, easy: 30, cost: 25 } 
+            },
+            { 
+                id: 'enoki', name: 'えのきたけ', cat: 'きのこ', colorGroup: '白', icon: '🍄', bg: 'bg-stone-100', text: 'text-stone-800', 
+                desc: '手でほぐすだけ！シャキシャキ食感と強い旨味。', 
+                cutName: 'ほぐしえのき',
+                imgSrc: '【みそ汁】えのき.jpg',
+                score: { color: 10, taste: 25, easy: 30, cost: 25 } 
+            },
+            { 
+                id: 'shimeji', name: 'しめじ', cat: 'きのこ', colorGroup: '茶', icon: '🍄', bg: 'bg-amber-100', text: 'text-amber-900', 
+                desc: '石づきを切って手でほぐす。プリッとした食感。', 
+                cutName: '小房しめじ',
+                imgSrc: '【みそ汁】しめじ.jpg',
+                score: { color: 15, taste: 25, easy: 30, cost: 25 } 
+            },
+            { 
+                id: 'wakame', name: '乾燥わかめ', cat: 'その他', colorGroup: '黒', icon: '🌊', bg: 'bg-teal-100', text: 'text-teal-900', 
+                desc: '水戻しだけ！包丁要らずで磯の香りがプラス。', 
+                cutName: 'ぷかぷかわかめ',
+                imgSrc: '【みそ汁】わかめ.jpg',
+                score: { color: 25, taste: 20, easy: 35, cost: 25 } 
+            },
+            { 
+                id: 'aburaage', name: '油揚げ', cat: 'その他', colorGroup: '茶', icon: '🦊', bg: 'bg-yellow-100', text: 'text-yellow-900', 
+                desc: '短冊切り。コクと旨味がジュワッと広がる！', 
+                cutName: '短冊油揚げ',
+                imgSrc: '【みそ汁】あぶらあげ.jpg',
+                score: { color: 15, taste: 25, easy: 25, cost: 25 } 
+            },
+            { 
+                id: 'komatsuna', name: '小松菜', cat: '葉物', colorGroup: '緑', icon: '🥬', bg: 'bg-emerald-100', text: 'text-emerald-900', 
+                desc: 'ざく切り。アクが少なく直入れできて彩り鮮やか！', 
+                cutName: 'ゆで小松菜',
+                imgSrc: '【みそ汁】こまつな.jpg', 
+                score: { color: 30, taste: 20, easy: 25, cost: 25 } 
+            },
+            { 
+                id: 'tofu', name: '豆腐', cat: 'その他', colorGroup: '白', icon: '🧊', bg: 'bg-cyan-50', text: 'text-cyan-900', 
+                desc: 'さいの目切り。柔らかくてツルッとした定番の具材！', 
+                cutName: '角切り豆腐',
+                imgSrc: '【みそ汁】豆腐.jpg',
+                score: { color: 10, taste: 25, easy: 30, cost: 30 } 
+            }
+        ];
+
+        // --- アプリケーション状態 ---
+        let state = {
+            selectedDashi: null,
+            selectedIngredients: [],
+            groupName: '',
+            soupName: ''
+        };
+
+        // --- DOM要素 ---
+        const dashiOptionsContainer = document.getElementById('dashi-options');
+        const ingredientOptionsContainer = document.getElementById('ingredient-options');
+        const ingredientCountEl = document.getElementById('ingredient-count');
+        
+        // プレビューDOM
+        const bowlIngredientsEl = document.getElementById('bowl-ingredients');
+        const summaryDashiEl = document.getElementById('summary-dashi');
+        const summaryIngredientsEl = document.getElementById('summary-ingredients');
+
+        // Canvas DOM & お絵かき関連変数
+        const paintCanvas = document.getElementById('paint-canvas');
+        const ctx = paintCanvas.getContext('2d');
+        const drawTools = document.getElementById('draw-tools');
+        const modeAutoBtn = document.getElementById('mode-auto-btn');
+        const modeDrawBtn = document.getElementById('mode-draw-btn');
+
+        let isDrawing = false;
+        let currentColor = '#D97706';
+        let currentBrushSize = 7;
+        let isDrawMode = false;
+
+        // メーターDOM
+        const scoreColorBar = document.getElementById('score-color-bar');
+        const scoreColorVal = document.getElementById('score-color-val');
+        const scoreColorDesc = document.getElementById('score-color-desc');
+
+        const scoreTasteBar = document.getElementById('score-taste-bar');
+        const scoreTasteVal = document.getElementById('score-taste-val');
+        const scoreTasteDesc = document.getElementById('score-taste-desc');
+
+        const scoreEasyBar = document.getElementById('score-easy-bar');
+        const scoreEasyVal = document.getElementById('score-easy-val');
+        const scoreEasyDesc = document.getElementById('score-easy-desc');
+
+        const scoreCostBar = document.getElementById('score-cost-bar');
+        const scoreCostVal = document.getElementById('score-cost-val');
+        const scoreCostDesc = document.getElementById('score-cost-desc');
+
+        const totalScoreEl = document.getElementById('total-score');
+
+        // モーダルDOM
+        const modal = document.getElementById('presentation-modal');
+        const openModalBtn = document.getElementById('open-presentation-btn');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        // --- 初期化 ---
+        window.addEventListener('DOMContentLoaded', () => {
+            renderDashiOptions();
+            renderIngredientOptions('all');
+            setupEvents();
+            setupCanvas();
+            updateUI();
+        });
+
+        // --- キャンバス（お絵かき）設定 ---
+        function setupCanvas() {
+            // 解像度の同期
+            const rect = paintCanvas.parentElement.getBoundingClientRect();
+            paintCanvas.width = rect.width || 220;
+            paintCanvas.height = rect.height || 220;
+
+            // タッチ・マウス共通イベントハンドラ
+            function startDraw(e) {
+                if (!isDrawMode) return;
+                isDrawing = true;
+                ctx.beginPath();
+                const pos = getPos(e);
+                ctx.moveTo(pos.x, pos.y);
+            }
+
+            function draw(e) {
+                if (!isDrawing || !isDrawMode) return;
+                e.preventDefault();
+                const pos = getPos(e);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = currentBrushSize;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+            }
+
+            function stopDraw() {
+                isDrawing = false;
+            }
+
+            function getPos(e) {
+                const r = paintCanvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: clientX - r.left,
+                    y: clientY - r.top
+                };
+            }
+
+            paintCanvas.addEventListener('mousedown', startDraw);
+            paintCanvas.addEventListener('mousemove', draw);
+            paintCanvas.addEventListener('mouseup', stopDraw);
+            paintCanvas.addEventListener('mouseleave', stopDraw);
+
+            paintCanvas.addEventListener('touchstart', startDraw, { passive: false });
+            paintCanvas.addEventListener('touchmove', draw, { passive: false });
+            paintCanvas.addEventListener('touchend', stopDraw);
+
+            // モード切替
+            modeAutoBtn.addEventListener('click', () => {
+                isDrawMode = false;
+                paintCanvas.classList.add('hidden');
+                bowlIngredientsEl.classList.remove('hidden');
+                drawTools.classList.add('hidden');
+                modeAutoBtn.className = "px-2 py-1 rounded bg-amber-500 text-white transition font-bold";
+                modeDrawBtn.className = "px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition font-bold";
+            });
+
+            modeDrawBtn.addEventListener('click', () => {
+                isDrawMode = true;
+                paintCanvas.classList.remove('hidden');
+                bowlIngredientsEl.classList.add('hidden');
+                drawTools.classList.remove('hidden');
+                drawTools.classList.add('flex');
+                modeDrawBtn.className = "px-2 py-1 rounded bg-amber-500 text-white transition font-bold";
+                modeAutoBtn.className = "px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition font-bold";
+                
+                // 初回キャンバスサイズ確実設定
+                const rect = paintCanvas.parentElement.getBoundingClientRect();
+                if (paintCanvas.width !== rect.width) {
+                    paintCanvas.width = rect.width;
+                    paintCanvas.height = rect.height;
+                }
+            });
+        }
+
+        window.setDrawColor = function(color, btnEl) {
+            currentColor = color;
+            if (btnEl) {
+                document.querySelectorAll('.color-btn').forEach(b => {
+                    b.classList.remove('ring-4', 'ring-amber-500', 'scale-125', 'border-2', 'border-white', 'shadow-md', 'z-10');
+                    b.classList.add('border', 'border-slate-300');
+                });
+                btnEl.classList.remove('border-slate-300');
+                btnEl.classList.add('ring-4', 'ring-amber-500', 'scale-125', 'border-2', 'border-white', 'shadow-md', 'z-10');
+            }
+        };
+
+        window.setBrushSize = function(size, btnEl) {
+            currentBrushSize = size;
+            if (btnEl) {
+                document.querySelectorAll('.brush-btn').forEach(b => {
+                    b.classList.remove('bg-amber-500', 'text-white', 'shadow-sm', 'ring-2', 'ring-amber-300');
+                    b.classList.add('bg-slate-100', 'text-slate-700');
+                });
+                btnEl.classList.remove('bg-slate-100', 'text-slate-700');
+                btnEl.classList.add('bg-amber-500', 'text-white', 'shadow-sm', 'ring-2', 'ring-amber-300');
+            }
+        };
+
+        window.clearCanvas = function() {
+            ctx.clearRect(0, 0, paintCanvas.width, paintCanvas.height);
+        };
+
+        // --- イベント設定 ---
+        function setupEvents() {
+            // カテゴリフィルター
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.remove('bg-slate-800', 'text-white');
+                        b.classList.add('bg-slate-100', 'text-slate-700');
+                    });
+                    e.target.classList.remove('bg-slate-100', 'text-slate-700');
+                    e.target.classList.add('bg-slate-800', 'text-white');
+                    
+                    const filter = e.target.getAttribute('data-filter');
+                    renderIngredientOptions(filter);
+                });
+            });
+
+            // リセット
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                state.selectedDashi = null;
+                state.selectedIngredients = [];
+                state.groupName = '';
+                state.soupName = '';
+                document.getElementById('group-name').value = '';
+                document.getElementById('soup-name').value = '';
+                renderDashiOptions();
+                renderIngredientOptions('all');
+                updateUI();
+            });
+
+            // モーダル開閉
+            openModalBtn.addEventListener('click', () => {
+                if (!state.selectedDashi || state.selectedIngredients.length < 2) {
+                    alert('出汁（だし）を1つ、具材を2つ以上えらんでからプレゼンシートを作ってね！');
+                    return;
+                }
+                updatePresentationModal();
+                modal.classList.remove('hidden');
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+
+            // グループ名入力連動
+            document.getElementById('group-name').addEventListener('input', (e) => {
+                state.groupName = e.target.value;
+            });
+            document.getElementById('soup-name').addEventListener('input', (e) => {
+                state.soupName = e.target.value;
+            });
+        }
+
+        // --- 出汁カード描写 ---
+        function renderDashiOptions() {
+            dashiOptionsContainer.innerHTML = DASHI_DATA.map(d => {
+                const isSelected = state.selectedDashi && state.selectedDashi.id === d.id;
+                return `
+                    <div onclick="selectDashi('${d.id}')" class="cursor-pointer rounded-xl p-3 border-2 transition-all duration-200 text-center flex flex-col items-center ${
+                        isSelected 
+                        ? 'border-amber-600 bg-amber-50 ring-2 ring-amber-400 shadow-md scale-[1.02]' 
+                        : 'border-slate-200 hover:border-amber-300 bg-white'
+                    }">
+                        <div class="text-2xl mb-1">${d.icon}</div>
+                        <div class="font-extrabold text-xs sm:text-sm text-slate-800 mb-1">${d.name}</div>
+                        <div class="text-[10px] text-slate-500 leading-tight hidden sm:block">${d.desc}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- 具材カード描写 ---
+        function renderIngredientOptions(filter) {
+            const filtered = filter === 'all' 
+                ? INGREDIENT_DATA 
+                : INGREDIENT_DATA.filter(i => i.cat === filter);
+
+            ingredientOptionsContainer.innerHTML = filtered.map(item => {
+                const isSelected = state.selectedIngredients.some(i => i.id === item.id);
+                return `
+                    <div onclick="toggleIngredient('${item.id}')" class="cursor-pointer rounded-xl p-2.5 border-2 transition-all duration-200 flex flex-col justify-between ${
+                        isSelected 
+                        ? 'border-emerald-600 bg-emerald-50 ring-2 ring-emerald-400 shadow-md' 
+                        : 'border-slate-200 hover:border-emerald-300 bg-white'
+                    }">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xl">${item.icon}</span>
+                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${item.bg} ${item.text}">${item.cat}</span>
+                            </div>
+                            <div class="font-extrabold text-xs text-slate-800">${item.name}</div>
+                        </div>
+                        <div class="text-[10px] text-slate-500 leading-tight mt-1 line-clamp-2">${item.desc}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- ロジック：選択 ---
+        window.selectDashi = function(id) {
+            state.selectedDashi = DASHI_DATA.find(d => d.id === id);
+            renderDashiOptions();
+            updateUI();
+        };
+
+        window.toggleIngredient = function(id) {
+            const existsIndex = state.selectedIngredients.findIndex(i => i.id === id);
+            if (existsIndex > -1) {
+                state.selectedIngredients.splice(existsIndex, 1);
+            } else {
+                if (state.selectedIngredients.length >= 3) {
+                    alert('具材は3つまで選べるよ！変更したいときは選んでいる具材をもう一度押して消してね。');
+                    return;
+                }
+                const item = INGREDIENT_DATA.find(i => i.id === id);
+                state.selectedIngredients.push(item);
+            }
+            renderIngredientOptions(document.querySelector('.filter-btn.bg-slate-800')?.getAttribute('data-filter') || 'all');
+            updateUI();
+        };
+
+        // お椀の中身ビジュアル更新（SVGフォールバック＋画像描画の二重化で確実に表示）
+        function updateUI() {
+            // カウント更新
+            ingredientCountEl.textContent = `選択中: ${state.selectedIngredients.length} / 3`;
+
+            // プレビューサマリー更新
+            summaryDashiEl.textContent = state.selectedDashi ? state.selectedDashi.name : '未選択';
+            summaryIngredientsEl.textContent = state.selectedIngredients.length > 0 
+                ? state.selectedIngredients.map(i => i.name).join(' ・ ')
+                : '未選択';
+
+            // お椀の中身ビジュアル更新
+            if (state.selectedIngredients.length === 0) {
+                bowlIngredientsEl.innerHTML = `<span class="text-xs text-amber-950 font-bold bg-amber-100/80 px-3 py-1 rounded-full shadow border border-amber-300">具材を選んでね</span>`;
+            } else {
+                let piecesHTML = '';
+                state.selectedIngredients.forEach((ing) => {
+                    // 画像の読み込み失敗時にはフォールバックとしてアイコンとカット名を綺麗に表示
+                    piecesHTML += `
+                        <div class="flex flex-col items-center justify-center p-1.5 hover:scale-110 transition-transform duration-200 relative group bg-white/40 backdrop-blur-sm rounded-xl border border-amber-200/50 shadow-sm" title="${ing.cutName}">
+                            <img src="${ing.imgSrc}" alt="${ing.name}" 
+                                 onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';" 
+                                 class="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-md">
+                            <div class="hidden flex-col items-center justify-center">
+                                <span class="text-2xl sm:text-3xl drop-shadow-md">${ing.icon}</span>
+                                <span class="text-[9px] font-extrabold text-amber-950 bg-amber-100/90 px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap mt-0.5">${ing.cutName}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                bowlIngredientsEl.innerHTML = piecesHTML;
+            }
+
+            // --- スコア計算 ---
+            let colorScore = 0;
+            let tasteScore = state.selectedDashi ? state.selectedDashi.score.taste : 0;
+            let easyScore = state.selectedDashi ? state.selectedDashi.score.easy : 0;
+            let costScore = state.selectedDashi ? state.selectedDashi.score.cost : 0;
+
+            // 色の多様性チェック
+            const colors = new Set(state.selectedIngredients.map(i => i.colorGroup));
+            if (colors.size === 1) colorScore = 30;
+            if (colors.size === 2) colorScore = 65;
+            if (colors.size >= 3) colorScore = 95;
+
+            // 具材スコア加算（コスパ・安心スコアの倍率を調整し、しっかり伸びるように修正）
+            state.selectedIngredients.forEach(i => {
+                colorScore += i.score.color * 0.5;
+                tasteScore += i.score.taste * 0.8;
+                easyScore += i.score.easy * 0.8;
+                costScore += i.score.cost * 1.0; // 加算倍率を1.0に修正
+            });
+
+            // カテゴリバランス加算
+            const cats = new Set(state.selectedIngredients.map(i => i.cat));
+            if (cats.has('根菜') && (cats.has('葉物') || cats.has('きのこ') || cats.has('その他'))) {
+                tasteScore += 15;
+            }
+
+            // 最大値整形
+            colorScore = Math.min(100, Math.round(colorScore));
+            tasteScore = Math.min(100, Math.round(tasteScore));
+            easyScore = Math.min(100, Math.round(easyScore));
+            costScore = Math.min(100, Math.round(costScore));
+
+            const totalScore = Math.round((colorScore + tasteScore + easyScore + costScore) / 4);
+
+            // メーター更新
+            updateMeter(scoreColorBar, scoreColorVal, colorScore, scoreColorDesc, getColorDesc(colorScore));
+            updateMeter(scoreTasteBar, scoreTasteVal, tasteScore, scoreTasteDesc, getTasteDesc(tasteScore, cats));
+            updateMeter(scoreEasyBar, scoreEasyVal, easyScore, scoreEasyDesc, getEasyDesc(easyScore));
+            updateMeter(scoreCostBar, scoreCostVal, costScore, scoreCostDesc, getCostDesc(costScore));
+
+            totalScoreEl.textContent = `総合バランス: ${totalScore}点`;
+        }
+
+        function updateMeter(barEl, valEl, score, descEl, descText) {
+            barEl.style.width = `${score}%`;
+            valEl.textContent = `${score} / 100`;
+            descEl.textContent = descText;
+        }
+
+        // コメント判定ロジック
+        function getColorDesc(score) {
+            if (score === 0) return '具材を選ぶと彩りメーターが上がります';
+            if (score < 50) return '赤（人参など）・緑（ネギ・小松菜など）・白（大根・豆腐など）の色を組み合わせるとさらに映えます！';
+            if (score < 80) return 'グッド！彩りが良く食欲をそそる見ためです！';
+            
+            const selectedColors = Array.from(new Set(state.selectedIngredients.map(i => i.colorGroup)));
+            if (selectedColors.includes('赤')) {
+                return 'パーフェクト！人参などの「赤」と緑・白のバランスが最高にキレイです！';
+            } else {
+                return 'パーフェクト！選んだ具材（' + selectedColors.join('・') + '）の色の組み合わせがとてもキレイです！';
+            }
+        }
+
+        function getTasteDesc(score, cats) {
+            if (score === 0) return '出汁と具材を選ぶと味がアップ！';
+            if (cats.has('根菜') && (cats.has('葉物') || cats.has('きのこ') || cats.has('その他'))) {
+                return '最高！水からゆでる根菜と、沸騰後に入れる葉物で食感と旨味のバランスが抜群です！';
+            }
+            if (cats.has('根菜')) {
+                return '根菜中心のホクホクとした甘みと旨味が溶け込んだお味噌汁になります。';
+            }
+            return '火の通りやすい具材でサッと作れる、やさしい味わいのお味噌汁になります。';
+        }
+
+        function getEasyDesc(score) {
+            if (score === 0) return '包丁の手際やゆで方の違い（水から・湯から）をチェック';
+            if (score > 80) return 'バッチリ！火の通りが早い具材や簡単な包丁操作で、手際よく調理できます！';
+            if (score > 60) return 'グッド！水からゆでる根菜と湯から入れる具材の入れるタイミングを意識しましょう。';
+            return '大根や人参などの硬い野菜は薄切りにして、火を入れる順番を工夫しよう！';
+        }
+
+        function getCostDesc(score) {
+            if (score === 0) return '安くて安全な食材選び（アレルギー確認）';
+            if (score >= 80) return 'パーフェクト！安価で手に入りやすく、アレルギーリスクも極めて低い最高の組み合わせです！';
+            if (score >= 60) return 'グッド！お手頃な価格で、安心して食べられる安全な食材選びができています！';
+            return '手軽に買えてみんなが安心して食べられる食材か確認してみよう！';
+        }
+
+        // --- プレゼンシート出力更新 ---
+        function updatePresentationModal() {
+            const groupNameVal = state.groupName || '未入力';
+            const soupNameVal = state.soupName || `${state.selectedIngredients.map(i=>i.name).join('と')}のほっこりみそ汁`;
+
+            document.getElementById('pres-group-name').textContent = `なまえ: ${groupNameVal}`;
+            document.getElementById('pres-soup-name').textContent = soupNameVal;
+
+            document.getElementById('pres-dashi').textContent = `${state.selectedDashi.icon} ${state.selectedDashi.name}`;
+            document.getElementById('pres-ingredients').textContent = state.selectedIngredients.map(i => `${i.icon} ${i.name}`).join(' ・ ');
+
+            // アピール文章の自動生成
+            const hasRoot = state.selectedIngredients.some(i => i.cat === '根菜');
+            const hasLeaf = state.selectedIngredients.some(i => i.cat === '葉物' || i.cat === 'きのこ');
+            
+            let tasteReason = `出汁に「${state.selectedDashi.name}」を選び、旨味をしっかり引き出します。`;
+            if (hasRoot && hasLeaf) {
+                tasteReason += ` じっくり煮て甘みが出る根菜と、サッと火が通る柔らかい具材を組み合わせて、食感のバリエーションを工夫しました。`;
+            } else {
+                tasteReason += ` 具材の味がスープに溶け出し、ホッとする味わいに仕上げました。`;
+            }
+
+            const colorsList = state.selectedIngredients.map(i => `${i.name}(${i.colorGroup})`).join('、');
+            let colorReason = `お椀に盛り付けたときに「${colorsList}」の色のバランスが美しく、美味しく見える工夫をしました。`;
+
+            let easyReason = `包丁を使う時は「猫の手」を徹底します。`;
+            if (hasRoot) {
+                easyReason += ` 根菜は火が通りやすいように薄いいちょう切りにして、安全かつ短時間で調理できるようにします。`;
+            } else {
+                easyReason += ` 切る作業が少ない食材を選んだので、手際よく短時間で作ることができます。`;
+            }
+
+            document.getElementById('pres-reason-taste').textContent = tasteReason;
+            document.getElementById('pres-reason-color').textContent = colorReason;
+            document.getElementById('pres-reason-easy').textContent = easyReason;
+
+            // 原稿作成
+            const scriptText = 
+`「これから、${groupNameVal} の発表を始めます。
+わたしが提案するおみそ汁は『${soupNameVal}』です！
+
+選んだ出汁は【${state.selectedDashi.name}】、具材は【${state.selectedIngredients.map(i=>i.name).join('・')}】です。
+
+おすすめのポイントは３つあります。
+1つ目は味です。${tasteReason}
+2つ目は見た目です。${colorReason}
+3つ目は安全と手際です。${easyReason}
+
+安全に美味しく食べられる最高のおみそ汁です！
+これで発表を終わります。ありがとうございました！」`;
+
+            document.getElementById('pres-script').textContent = scriptText;
+        }
+
+    </script>
+</body>
+</html>
